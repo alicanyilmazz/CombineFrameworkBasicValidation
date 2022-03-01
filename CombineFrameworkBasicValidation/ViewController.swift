@@ -32,35 +32,9 @@ class ViewController: UIViewController, UITextFieldDelegate{
     
 
     override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        setupOutlets()
-    
-       nameFormTextCollection = FormTextCollection()
-       emailFormTextCollection = FormTextCollection()
-       sendFormButtonCollection = FormButtonCollection()
-       let _formContentBuilder = formContentBuilder.formContent.items
-       
-       newUserSubscription()
-        
-       nameFormTextCollection!.setup(formComponent: _formContentBuilder[0], textField: nameTextField, label: nameWarningLabel, imageView: nameLabelImage)
-       emailFormTextCollection!.setup(formComponent: _formContentBuilder[1], textField: emailTextField, label: emailWarningLabel, imageView: emailLabelImage)
-       
-        nameFormTextCollection!.subject.sink { [weak self] (val , index) in
-            self?.formContentBuilder.update(val: val, componentIndex: index)
-        }.store(in: &subscriptions)
-        
-        emailFormTextCollection!.subject.sink { [weak self] (val , index) in
-            self?.formContentBuilder.update(val: val, componentIndex: index)
-        }.store(in: &subscriptions)
-        
-        sendFormButtonCollection!.subject.sink{ [weak self] formIdl in
-            switch formIdl{
-            case .submit: self?.formContentBuilder.validate()
-            default: break
-            }
-        }.store(in: &subscriptions)
-        
+       super.viewDidLoad()
+       setupOutlets()
+       bind()
     }
     
     @IBAction func sendButtonTapped(_ sender: UIButton) {
@@ -75,6 +49,7 @@ class ViewController: UIViewController, UITextFieldDelegate{
 }
 
 extension ViewController{
+    
     fileprivate func setupOutlets() {
         nameTextField.delegate = self
         emailTextField.delegate = self
@@ -95,6 +70,39 @@ extension ViewController{
         sendButton.layer.cornerRadius = 10
 
     }
+    
+    fileprivate func bind(){
+        nameFormTextCollection = FormTextCollection()
+        emailFormTextCollection = FormTextCollection()
+        sendFormButtonCollection = FormButtonCollection()
+         
+        guard let _nameFormTextCollection = nameFormTextCollection else { return }
+        guard let _emailFormTextCollection = emailFormTextCollection else { return }
+        guard let _sendFormButtonCollection = sendFormButtonCollection else { return }
+         
+        let _formContentBuilder = formContentBuilder.formContent.items
+        
+        newUserSubscription()
+         
+         _nameFormTextCollection.setup(formComponent: _formContentBuilder[0], textField: nameTextField, label: nameWarningLabel, imageView: nameLabelImage)
+         _emailFormTextCollection.setup(formComponent: _formContentBuilder[1], textField: emailTextField, label: emailWarningLabel, imageView: emailLabelImage)
+        
+         _nameFormTextCollection.subject.sink { [weak self] (val , index) in
+             self?.formContentBuilder.update(val: val, componentIndex: index)
+         }.store(in: &subscriptions)
+         
+         _emailFormTextCollection.subject.sink { [weak self] (val , index) in
+             self?.formContentBuilder.update(val: val, componentIndex: index)
+         }.store(in: &subscriptions)
+         
+         _sendFormButtonCollection.subject.sink{ [weak self] formIdl in
+             switch formIdl{
+             case .submit: self?.formContentBuilder.validate()
+             default: break
+             }
+         }.store(in: &subscriptions)
+    }
+    
 }
 
 
