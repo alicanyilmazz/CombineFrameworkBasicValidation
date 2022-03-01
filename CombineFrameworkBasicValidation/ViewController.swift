@@ -71,11 +71,8 @@ extension ViewController{
         guard let _emailFormTextCollection = emailFormTextCollection else { return }
         guard let _sendFormButtonCollection = sendFormButtonCollection else { return }
         
-         
         let _formContentBuilder = formContentBuilder.formContent.items
         
-        
-         
          _nameFormTextCollection.setup(formComponent: _formContentBuilder[0])
          _emailFormTextCollection.setup(formComponent: _formContentBuilder[1])
         
