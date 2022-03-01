@@ -35,6 +35,7 @@ class ViewController: UIViewController{
        super.viewDidLoad()
        setupOutlets()
        bind()
+       postData()
     }
 }
 
@@ -69,10 +70,11 @@ extension ViewController{
         guard let _nameFormTextCollection = nameFormTextCollection else { return }
         guard let _emailFormTextCollection = emailFormTextCollection else { return }
         guard let _sendFormButtonCollection = sendFormButtonCollection else { return }
+        
          
         let _formContentBuilder = formContentBuilder.formContent.items
         
-        newUserSubscription()
+        
          
          _nameFormTextCollection.setup(formComponent: _formContentBuilder[0])
          _emailFormTextCollection.setup(formComponent: _formContentBuilder[1])
@@ -100,7 +102,7 @@ extension ViewController : UITextFieldDelegate{
         sendFormButtonCollection?.subject.send(FormField.submit)
     }
     
-    func newUserSubscription(){
+    func postData(){
         formContentBuilder.user.sink { [weak self] val in
             print(val)
         }.store(in: &subscriptions)
