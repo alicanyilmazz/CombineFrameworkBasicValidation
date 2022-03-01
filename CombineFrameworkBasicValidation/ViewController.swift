@@ -8,7 +8,7 @@
 import UIKit
 import Combine
 
-class ViewController: UIViewController, UITextFieldDelegate{
+class ViewController: UIViewController{
 
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var nameWarningLabel: UILabel!
@@ -36,16 +36,6 @@ class ViewController: UIViewController, UITextFieldDelegate{
        setupOutlets()
        bind()
     }
-    
-    @IBAction func sendButtonTapped(_ sender: UIButton) {
-        sendFormButtonCollection?.subject.send(FormField.submit)
-    }
-    
-    func newUserSubscription(){
-        formContentBuilder.user.sink { [weak self] val in
-            print(val)
-        }.store(in: &subscriptions)
-    }
 }
 
 extension ViewController{
@@ -72,8 +62,8 @@ extension ViewController{
     }
     
     fileprivate func bind(){
-        nameFormTextCollection = FormTextCollection()
-        emailFormTextCollection = FormTextCollection()
+        nameFormTextCollection = FormTextCollection(textField: nameTextField, label: nameWarningLabel, imageView: nameLabelImage)
+        emailFormTextCollection = FormTextCollection(textField: emailTextField, label: emailWarningLabel, imageView: emailLabelImage)
         sendFormButtonCollection = FormButtonCollection()
          
         guard let _nameFormTextCollection = nameFormTextCollection else { return }
@@ -84,8 +74,8 @@ extension ViewController{
         
         newUserSubscription()
          
-         _nameFormTextCollection.setup(formComponent: _formContentBuilder[0], textField: nameTextField, label: nameWarningLabel, imageView: nameLabelImage)
-         _emailFormTextCollection.setup(formComponent: _formContentBuilder[1], textField: emailTextField, label: emailWarningLabel, imageView: emailLabelImage)
+         _nameFormTextCollection.setup(formComponent: _formContentBuilder[0])
+         _emailFormTextCollection.setup(formComponent: _formContentBuilder[1])
         
          _nameFormTextCollection.subject.sink { [weak self] (val , index) in
              self?.formContentBuilder.update(val: val, componentIndex: index)
@@ -105,7 +95,17 @@ extension ViewController{
     
 }
 
-
+extension ViewController : UITextFieldDelegate{
+    @IBAction func sendButtonTapped(_ sender: UIButton) {
+        sendFormButtonCollection?.subject.send(FormField.submit)
+    }
+    
+    func newUserSubscription(){
+        formContentBuilder.user.sink { [weak self] val in
+            print(val)
+        }.store(in: &subscriptions)
+    }
+}
 
 
 
